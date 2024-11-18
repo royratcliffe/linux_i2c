@@ -1,10 +1,10 @@
 /*  File:    linux/i2c.pl
-    Author:  ,,,
+    Author:  Roy Ratcliffe, Northumberland, United Kingdom
     Created: Nov 17 2024
     Purpose: I2C
 */
 
-:- module(i2c,
+:- module(linux_i2c,
           [
           ]).
 
