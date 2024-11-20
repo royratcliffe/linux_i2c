@@ -17,9 +17,9 @@ distclean: clean
 	rm -f $(SOBJ)
 
 # Use the rebuild goal when installing directly from the source. This presumes a
-# SWI-Prolog installation on Linux. Its goal rebuilds and activates the pack symbolically.
-# Check out the `~/.local/share/swi-prolog/pack` folder. Find a symbolic link to
-# the source pack.
+# SWI-Prolog installation on Linux. Its goal rebuilds and activates the pack
+# symbolically. Check out the `~/.local/share/swi-prolog/pack` folder. Find a
+# symbolic link to the source pack.
 rebuild:
 	swipl -g "pack_install(., [rebuild(true), interactive(false)])" -t halt
 
