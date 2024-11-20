@@ -8,4 +8,13 @@
           [
           ]).
 
+/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+?- listing(linux_i2c:_).
+
+%   Foreign: i2c_slave/2
+true.
+
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
+
 :- load_foreign_library(foreign(linux_i2c)).
