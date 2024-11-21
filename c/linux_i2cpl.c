@@ -22,12 +22,19 @@ foreign_t i2c_slave_2(term_t Stream, term_t Address)
   PL_succeed;
 }
 
+/*!
+ * Makes an assumption about unsigned longs and 64-bit unsigned integers. It
+ * assumes that their size matches on the target platform. The C `ioctl`
+ * interface expects an unsigned long. The Prolog interface unifies the unsigned
+ * long with an unsigned 64-bit integer. It relies on C to coerce the former to
+ * the latter.
+ */
 foreign_t i2c_funcs_2(term_t Stream, term_t Funcs)
 { IOSTREAM *stream;
   unsigned long funcs;
   if (!PL_get_stream(Stream, &stream, SIO_OUTPUT)) PL_fail;
   if (0 > ioctl(Sfileno(stream), I2C_FUNCS, &funcs)) PL_fail;
-  if (!PL_unify_integer(Funcs, funcs)) PL_fail;
+  if (!PL_unify_uint64(Funcs, funcs)) PL_fail;
   PL_succeed;
 }
 
