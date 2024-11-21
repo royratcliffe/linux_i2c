@@ -15,6 +15,14 @@
 %   Foreign: i2c_slave/2
 true.
 
+Open an I2C controller. Ask for its capabilities using the `I2C_FUNCS` call to
+`ioctl` using the stream's file descriptor. See the followinmg snippet; some
+details elided.
+
+    ?- open('/dev/i2c-1', update, Stream, [encoding(octet)]).
+    ?- linux_i2c:i2c_funcs($Stream, Funcs), format('~16r~n', [Funcs]).
+    eff000d
+
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 :- load_foreign_library(foreign(linux_i2c)).
