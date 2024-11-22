@@ -1,5 +1,5 @@
 SOBJ = $(PACKSODIR)/linux_i2c.$(SOEXT)
-OBJ = c/linux_i2cpl.o
+OBJ = c/linux_i2cpl.o c/linux_i2c_devpl.o
 
 CFLAGS += -O2 -fomit-frame-pointer
 
