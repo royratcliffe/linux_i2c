@@ -5,7 +5,7 @@
 */
 
 :- module(linux_i2c,
-          [
+          [ i2c_funcs/2                         % +Stream,-Funcs
           ]).
 
 /* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -26,3 +26,9 @@ details elided.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 :- load_foreign_library(foreign(linux_i2c)).
+
+%!  i2c_funcs(+Stream, -Funcs) is det.
+
+i2c_funcs(Stream, Funcs) :-
+    i2c_funcs_stream_to_int(Stream, Int),
+    i2c_funcs_int_to_list(Int, Funcs).
