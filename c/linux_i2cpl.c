@@ -154,7 +154,7 @@ foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
   char bytes[I2C_BLOCK_MAX];
   ssize_t actual = read(blob->fd, bytes, expected);
   if (0 > actual) PL_fail;
-  return PL_unify_list_nchars(Bytes, actual, bytes);
+  return PL_unify_list_ncodes(Bytes, actual, bytes);
 }
 
 install_t install_linux_i2c()
