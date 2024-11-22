@@ -8,7 +8,12 @@
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
 
+#include <unistd.h>
+#include <fcntl.h>
+#include <errno.h>
 #include <sys/ioctl.h>
+
+#include "linux_i2c_devpl.h"
 
 /*!
  * Throws an exception if the address is \e not an integer.
@@ -111,10 +116,19 @@ foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
   return PL_unify_nil(Tail);
 }
 
+foreign_t i2c_open_2(term_t Pathname, term_t Dev)
+{ char *pathname;
+  if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
+  int fd;
+  if (0 > (fd = open(pathname, O_RDWR))) PL_instantiation_error(Pathname);
+  return unify_i2c_dev(Dev, fd);
+}
+
 install_t install_linux_i2c()
 { PL_register_foreign("i2c_slave", 2, i2c_slave_2, 0);
-  PL_register_foreign("i2c_funcs_stream_to_int", 2, i2c_funcs_stream_to_int_2, 0);
+  PL_register_foreign("i2c_funcs_dev_to_int", 2, i2c_funcs_dev_to_int_2, 0);
   PL_register_foreign("i2c_funcs_int_to_list", 2, i2c_funcs_int_to_list_2, 0);
+  PL_register_foreign("i2c_open", 2, i2c_open_2, 0);
 }
 
 install_t uninstall_linux_i2c()
