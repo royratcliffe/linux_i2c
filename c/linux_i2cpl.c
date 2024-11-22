@@ -91,13 +91,13 @@ foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
   };
   for (size_t i = 0; i < sizeof(i2c_funcs)/sizeof(i2c_funcs[0]); i++)
     if (funcs & i2c_funcs[i].func)
-      { if (!PL_unify_list(Tail, Head, Tail) || !PL_unify_atom_chars(Head, i2c_funcs[i].chars)) PL_fail;
-        /*
-         * Clear the functionality bit so that it does not appear in the Funcs
-         * list subsequently as a bit(Z) term.
-         */
-        funcs ^= i2c_funcs[i].func;
-      }
+    { if (!PL_unify_list(Tail, Head, Tail) || !PL_unify_atom_chars(Head, i2c_funcs[i].chars)) PL_fail;
+      /*
+        * Clear the functionality bit so that it does not appear in the Funcs
+        * list subsequently as a bit(Z) term.
+        */
+      funcs ^= i2c_funcs[i].func;
+    }
   /*
    * Add bit(Z) terms for anything else where Z is the number of trailing bits.
    *
