@@ -18,12 +18,12 @@
 /*!
  * Throws an exception if the address is \e not an integer.
  */
-foreign_t i2c_slave_2(term_t Stream, term_t Address)
-{ IOSTREAM *stream;
+foreign_t i2c_slave_2(term_t Dev, term_t Address)
+{ struct linux_i2c_dev *blob;
   int address;
-  if (!PL_get_stream(Stream, &stream, SIO_OUTPUT)) PL_fail;
+  if (!get_i2c_dev(Dev, &blob)) PL_fail;
   if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(Sfileno(stream), I2C_SLAVE, address)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) PL_fail;
   PL_succeed;
 }
 
@@ -34,11 +34,11 @@ foreign_t i2c_slave_2(term_t Stream, term_t Address)
  * long with an unsigned 64-bit integer. It relies on C to coerce the former to
  * the latter.
  */
-foreign_t i2c_funcs_stream_to_int_2(term_t Stream, term_t Int)
-{ IOSTREAM *stream;
-  if (!PL_get_stream(Stream, &stream, 0)) PL_fail;
+foreign_t i2c_funcs_dev_to_int_2(term_t Dev, term_t Int)
+{ struct linux_i2c_dev *blob;
+  if (!get_i2c_dev(Dev, &blob)) PL_fail;
   unsigned long funcs;
-  if (0 > ioctl(Sfileno(stream), I2C_FUNCS, &funcs)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_FUNCS, &funcs)) PL_fail;
   if (!PL_unify_uint64(Int, funcs)) PL_fail;
   PL_succeed;
 }
