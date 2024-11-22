@@ -16,6 +16,6 @@ extern PL_blob_t i2c_dev_blob_type;
  * Opens the device for read-write access by its path name first. Fails unless
  * opening succeeds.
  */
-int unify_i2c_dev(term_t Term, const char *pathname);
+int unify_i2c_dev(term_t Term, int fd);
 
 int get_i2c_dev(term_t Term, struct linux_i2c_dev **blob_ptr);

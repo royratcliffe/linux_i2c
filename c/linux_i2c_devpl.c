@@ -2,8 +2,6 @@
 
 #include <SWI-Stream.h>
 
-#include <unistd.h>
-#include <fcntl.h>
 #include <memory.h>
 
 #include <linux/i2c.h>
@@ -25,10 +23,8 @@ PL_blob_t i2c_dev_blob_type =
   .write = write_i2c_dev,
 };
 
-int unify_i2c_dev(term_t Term, const char *pathname)
-{ int fd;
-  if ((fd = open(pathname, O_RDWR)) < 0) PL_fail;
-  struct linux_i2c_dev *blob = PL_malloc(sizeof(*blob));
+int unify_i2c_dev(term_t Term, int fd)
+{ struct linux_i2c_dev *blob = PL_malloc(sizeof(*blob));
   (void)memset(blob, 0, sizeof(*blob));
   blob->fd = fd;
   return PL_unify_blob(Term, blob, sizeof(*blob), &i2c_dev_blob_type);
