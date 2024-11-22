@@ -38,9 +38,83 @@ foreign_t i2c_funcs_stream_to_int_2(term_t Stream, term_t Int)
   PL_succeed;
 }
 
+/*
+ * Turn a set of bits into a list of atoms. One atom, one bit; it makes a
+ * simplifying assumption that all functionality bits in the mask represent
+ * presence or absence only. Each item in the resulting list represents a set
+ * bit in the integer.
+ */
+foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
+{ uint64_t funcs;
+  if (!PL_get_uint64(Int, &funcs)) PL_fail;
+  term_t Tail = PL_copy_term_ref(Funcs), Head = PL_new_term_ref();
+  static const struct
+  { unsigned long func;
+    const char *chars;
+  } i2c_funcs[] =
+  {
+#ifdef I2C_FUNC_I2C
+    {I2C_FUNC_I2C, "i2c"},
+#endif
+#ifdef I2C_FUNC_10BIT_ADDR
+    /*
+     * The following becomes an atom that requires quoting in Prolog because it
+     * begins with a digit. It could be reformatted, e.g. `tenbit_addr` or
+     * perhaps `bit10_addr`. Nevertheless, ten-bit addressing is less common.
+     */
+    {I2C_FUNC_10BIT_ADDR, "10bit_addr"},
+#endif
+#ifdef I2C_FUNC_PROTOCOL_MANGLING
+    {I2C_FUNC_PROTOCOL_MANGLING, "protocol_mangling"},
+#endif
+#ifdef I2C_FUNC_SMBUS_PEC
+    {I2C_FUNC_SMBUS_PEC, "smbus_pec"},
+#endif
+#ifdef I2C_FUNC_NOSTART
+    {I2C_FUNC_NOSTART, "nostart"},
+#endif
+#ifdef I2C_FUNC_SLAVE
+    {I2C_FUNC_SLAVE, "slave"},
+#endif
+#ifdef I2C_FUNC_SMBUS_BLOCK_PROC_CALL
+    {I2C_FUNC_SMBUS_BLOCK_PROC_CALL, "smbus_block_proc_call"},
+#endif
+#ifdef I2C_FUNC_SMBUS_QUICK
+    {I2C_FUNC_SMBUS_QUICK, "smbus_quick"},
+#endif
+#ifdef I2C_FUNC_SMBUS_READ_BYTE
+    {I2C_FUNC_SMBUS_READ_BYTE, "smbus_read_byte"},
+#endif
+#ifdef I2C_FUNC_SMBUS_WRITE_BYTE
+    {I2C_FUNC_SMBUS_WRITE_BYTE, "smbus_write_byte"},
+#endif
+  };
+  for (size_t i = 0; i < sizeof(i2c_funcs)/sizeof(i2c_funcs[0]); i++)
+    if (funcs & i2c_funcs[i].func)
+      { if (!PL_unify_list(Tail, Head, Tail) || !PL_unify_atom_chars(Head, i2c_funcs[i].chars)) PL_fail;
+        /*
+         * Clear the functionality bit so that it does not appear in the Funcs
+         * list subsequently as a bit(Z) term.
+         */
+        funcs ^= i2c_funcs[i].func;
+      }
+  /*
+   * Add bit(Z) terms for anything else where Z is the number of trailing bits.
+   *
+   *   for (int z = 0; z < 32; z++)
+   *   { if (funcs & (1UL << z))
+   *       if (!PL_unify_list(Tail, Head, Tail) || !PL_unify_term(Head, PL_FUNCTOR_CHARS, "bit", 1, PL_INT, z)) PL_fail;
+   *   }
+   */
+  for (int z; (z = __builtin_ctzl(funcs)) < 32; funcs ^= 1UL << z)
+    if (!PL_unify_list(Tail, Head, Tail) || !PL_unify_term(Head, PL_FUNCTOR_CHARS, "bit", 1, PL_INT, z)) PL_fail;
+  return PL_unify_nil(Tail);
+}
+
 install_t install_linux_i2c()
 { PL_register_foreign("i2c_slave", 2, i2c_slave_2, 0);
   PL_register_foreign("i2c_funcs_stream_to_int", 2, i2c_funcs_stream_to_int_2, 0);
+  PL_register_foreign("i2c_funcs_int_to_list", 2, i2c_funcs_int_to_list_2, 0);
 }
 
 install_t uninstall_linux_i2c()
