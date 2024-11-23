@@ -43,16 +43,26 @@ reg_adr(allcalladr, 16'05).
 reg_adr(led(LED, OnOff, LH), Adr) :-
     between(0, 15, LED),
     led_adr(OnOff, LH, Adr0),
-    Adr is 16'06 + (16'04 * LED) + Adr0.
+    Adr is 16'06 + Adr0 + (16'04 * LED).
 reg_adr(led(all, OnOff, LH), Adr) :-
     led_adr(OnOff, LH, Adr0),
     Adr is 16'fa + Adr0.
 reg_adr(pre(scale), 16'fe).
 reg_adr(test(mode), 16'ff).
 
+rd(I2C, Adr, Bytes) :- i2c_write(I2C, [Adr]), i2c_read(I2C, Bytes).
+
+wr(I2C, Adr, Bytes) :- i2c_write(I2C, [Adr|Bytes]).
+
 pair(A, B, A-B).
 
 zip(A, B, C) :- maplist(pair, A, B, C).
+
+adr_bytes(Adr, Bytes, AdrBytes) :-
+    length(Bytes, Bytes1),
+    Adr1 is Adr + Bytes1 - 1,
+    fdset_to_list(from_to(n(Adr), n(Adr1)), Adrs),
+    zip(Adrs, Bytes, AdrBytes).
 
 test(mode1, Byte == 16'20) :-
     i2c_dev(Dev),
@@ -77,11 +87,9 @@ test(dump_46) :-
     i2c_open(Dev, I2C),
     pca9685_addr(Addr),
     i2c_slave(I2C, Addr),
-    i2c_write(I2C, [16'00]),
     length(Bytes, 16'46),
-    i2c_read(I2C, Bytes),
-    fdset_to_list(from_to(n(16'00), n(16'45)), Adrs),
-    zip(Adrs, Bytes, AdrBytes),
+    rd(I2C, 16'00, Bytes),
+    adr_bytes(16'00, Bytes, AdrBytes),
     forall(member(Adr-Byte, AdrBytes),
            (   reg_adr(Reg, Adr),
                format('~n~|~`0t~16r~2+: ~|~`0t~16r~2+ ~k', [Adr, Byte, Reg])
