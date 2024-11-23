@@ -31,14 +31,14 @@ static int i2c_errno(const char *culprit);
 
 foreign_t i2c_open_2(term_t Pathname, term_t Dev)
 { char *pathname;
+  int fd;
   /*
    * Does the atom-to-character convertion need to care about Windows multi-byte
    * characters? No because this pack does not work on Windows. It cannot build
    * on Windows, not without the Linux headers.
    */
   if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
-  int fd;
-  if (0 > (fd = open(pathname, O_RDWR))) PL_instantiation_error(Pathname);
+  if (0 > (fd = open(pathname, O_RDWR))) return i2c_errno("open");
   return unify_i2c_dev(Dev, fd);
 }
 
@@ -51,9 +51,9 @@ foreign_t i2c_open_2(term_t Pathname, term_t Dev)
  */
 foreign_t i2c_funcs_dev_to_int_2(term_t Dev, term_t Int)
 { struct linux_i2c_dev *blob;
-  if (!get_i2c_dev(Dev, &blob)) PL_fail;
   unsigned long funcs;
-  if (0 > ioctl(blob->fd, I2C_FUNCS, &funcs)) PL_fail;
+  if (!get_i2c_dev(Dev, &blob)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_FUNCS, &funcs)) return i2c_errno("ioctl");
   if (!PL_unify_uint64(Int, funcs)) PL_fail;
   PL_succeed;
 }
@@ -139,7 +139,7 @@ foreign_t i2c_slave_2(term_t Dev, term_t Address)
   int address;
   if (!get_i2c_dev(Dev, &blob)) PL_fail;
   if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) return i2c_errno("ioctl");
   PL_succeed;
 }
 
@@ -148,29 +148,29 @@ foreign_t i2c_slave_force_2(term_t Dev, term_t Address)
   int address;
   if (!get_i2c_dev(Dev, &blob)) PL_fail;
   if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, address)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, address)) return i2c_errno("ioctl");
   PL_succeed;
 }
 
 foreign_t i2c_write_3(term_t Dev, term_t Bytes, term_t Actual)
 { struct linux_i2c_dev *blob;
-  if (!get_i2c_dev(Dev, &blob)) return PL_type_error(i2c_dev_blob_type.name, Dev);
   size_t len;
   char *bytes;
-  if (!PL_get_list_nchars(Bytes, &len, &bytes, CVT_LIST)) return PL_type_error("list", Bytes);
   ssize_t actual;
-  if (0 > (actual = write(blob->fd, bytes, len))) PL_fail;
+  if (!get_i2c_dev(Dev, &blob)) return PL_type_error(i2c_dev_blob_type.name, Dev);
+  if (!PL_get_list_nchars(Bytes, &len, &bytes, CVT_LIST)) return PL_type_error("list", Bytes);
+  if (0 > (actual = write(blob->fd, bytes, len))) return i2c_errno("write");
   return PL_unify_integer(Actual, actual);
 }
 
 foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
 { struct linux_i2c_dev *blob;
-  if (!get_i2c_dev(Dev, &blob)) return PL_type_error(i2c_dev_blob_type.name, Dev);
   size_t expected;
-  if (!PL_get_size_ex(Expected, &expected) || expected > I2C_BLOCK_MAX) PL_fail;
   char bytes[I2C_BLOCK_MAX];
-  ssize_t actual = read(blob->fd, bytes, expected);
-  if (0 > actual) PL_fail;
+  ssize_t actual;
+  if (!get_i2c_dev(Dev, &blob)) return PL_type_error(i2c_dev_blob_type.name, Dev);
+  if (!PL_get_size_ex(Expected, &expected) || expected > I2C_BLOCK_MAX) PL_fail;
+  if (0 > (actual = read(blob->fd, bytes, expected))) return i2c_errno("read");
   /*
    * Unify as codes, not as characters. The result will appear as integers
    * rather than Unicode character atoms.
