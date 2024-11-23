@@ -35,13 +35,13 @@ details elided.
 
 :- load_foreign_library(foreign(linux_i2c)).
 
-%!  i2c_funcs(+Stream, -Funcs) is det.
-
-i2c_funcs(Stream, Funcs) :-
-    i2c_funcs_dev_to_int(Stream, Int),
-    i2c_funcs_int_to_list(Int, Funcs).
-
 %!  i2c_open(+Pathname, -I2C) is semidet.
+
+%!  i2c_funcs(+I2C, -Funcs) is det.
+
+i2c_funcs(I2C, Funcs) :-
+    i2c_funcs_dev_to_int(I2C, Int),
+    i2c_funcs_int_to_list(Int, Funcs).
 
 %!  i2c_slave(+I2C, +Addr) is det.
 
