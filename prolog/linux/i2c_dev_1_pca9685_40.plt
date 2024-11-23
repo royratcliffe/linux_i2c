@@ -30,6 +30,8 @@ test(mode1, Byte == 16'20) :-
     i2c_open(Dev, I2C),
     pca9685_addr(Addr),
     i2c_slave(I2C, Addr),
+    % Write 00 to the Control Register.
+    % It determines access to the other registers.
     i2c_write(I2C, [16'00]),
     i2c_read(I2C, [Byte]).
 
@@ -41,14 +43,26 @@ test(mode1_mode2, [Mode1, Mode2] == [16'20, 16'04]) :-
     i2c_write(I2C, [16'00]),
     i2c_read(I2C, [Mode1, Mode2]).
 
-test(dump) :-
+test(dump_46) :-
     i2c_dev(Dev),
     i2c_open(Dev, I2C),
     pca9685_addr(Addr),
     i2c_slave(I2C, Addr),
     i2c_write(I2C, [16'00]),
-    length(Bytes, 34),
+    length(Bytes, 46),
     i2c_read(I2C, Bytes),
-    forall(member(Byte, Bytes), format('~|~`0t~16r~2+', [Byte])).
+    forall(member(Byte, Bytes), format('~n~|~`0t~16r~2+', [Byte])),
+    nl.
+
+test(dump_fa) :-
+    i2c_dev(Dev),
+    i2c_open(Dev, I2C),
+    pca9685_addr(Addr),
+    i2c_slave(I2C, Addr),
+    i2c_write(I2C, [16'fa]),
+    length(Bytes, 6),
+    i2c_read(I2C, Bytes),
+    forall(member(Byte, Bytes), format('~n~|~`0t~16r~2+', [Byte])),
+    nl.
 
 :- end_tests(i2c_dev_1_pca9685_40).
