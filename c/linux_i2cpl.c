@@ -21,6 +21,12 @@
  */
 #define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
 
+/*!
+ * \brief Raises an exception.
+ * \details Exceptions have the compound form \c{i2c_errno(Culprit, ErrNo)}
+ * where \c Culprit describes what caused the error and \c ErrNo is the standard
+ * C library error number, a positive integer.
+ */
 static int i2c_errno(const char *culprit);
 
 foreign_t i2c_open_2(term_t Pathname, term_t Dev)
@@ -172,9 +178,6 @@ foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
   return PL_unify_list_ncodes(Bytes, actual, bytes);
 }
 
-/*!
- * Raises an exception.
- */
 int i2c_errno(const char *culprit)
 { term_t Except = PL_new_term_ref();
   if (!PL_unify_term(Except,
