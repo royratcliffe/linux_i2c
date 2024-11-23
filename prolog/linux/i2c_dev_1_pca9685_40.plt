@@ -28,10 +28,19 @@ i2c_dev('/dev/i2c-1').
 
 pca9685_addr(16'40).
 
+%!  led_adr(?OnOff, ?LH, ?Adr0) is nondet.
+%
+%   Adr0 is the PWM control's on-off low-high relative register address
+%   offset, between 0 and 3 inclusive.
+
 led_adr(on,  l, 16'00).
 led_adr(on,  h, 16'01).
 led_adr(off, l, 16'02).
 led_adr(off, h, 16'03).
+
+%!  reg_adr(?Reg, ?Adr) is nondet.
+%
+%   Maps the entire PCA9685 register file.
 
 reg_adr(mode(Mode), Adr) :-
     between(1, 2, Mode),
