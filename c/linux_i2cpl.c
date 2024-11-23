@@ -18,7 +18,9 @@
 
 /*
  * Defines the maximum size of an I2C transfer. Used to allocate the stack-based
- * read buffer, and validate the number of expected bytes to read.
+ * read buffer, and validate the number of expected bytes to read. This limits
+ * auto-incrementing block reads, or writes, for devices with large register
+ * files.
  */
 #define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
 
