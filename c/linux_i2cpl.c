@@ -22,7 +22,7 @@
  * auto-incrementing block reads, or writes, for devices with large register
  * files.
  */
-#define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
+#define I2C_BLOCK_MAX 256
 
 /*!
  * \brief Raises an exception.
