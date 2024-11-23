@@ -17,25 +17,12 @@
 
 #define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
 
-/*!
- * Throws an exception if the address is \e not an integer.
- */
-foreign_t i2c_slave_2(term_t Dev, term_t Address)
-{ struct linux_i2c_dev *blob;
-  int address;
-  if (!get_i2c_dev(Dev, &blob)) PL_fail;
-  if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) PL_fail;
-  PL_succeed;
-}
-
-foreign_t i2c_slave_force_2(term_t Dev, term_t Address)
-{ struct linux_i2c_dev *blob;
-  int address;
-  if (!get_i2c_dev(Dev, &blob)) PL_fail;
-  if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, address)) PL_fail;
-  PL_succeed;
+foreign_t i2c_open_2(term_t Pathname, term_t Dev)
+{ char *pathname;
+  if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
+  int fd;
+  if (0 > (fd = open(pathname, O_RDWR))) PL_instantiation_error(Pathname);
+  return unify_i2c_dev(Dev, fd);
 }
 
 /*!
@@ -127,12 +114,25 @@ foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
   return PL_unify_nil(Tail);
 }
 
-foreign_t i2c_open_2(term_t Pathname, term_t Dev)
-{ char *pathname;
-  if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
-  int fd;
-  if (0 > (fd = open(pathname, O_RDWR))) PL_instantiation_error(Pathname);
-  return unify_i2c_dev(Dev, fd);
+/*!
+ * Throws an exception if the address is \e not an integer.
+ */
+foreign_t i2c_slave_2(term_t Dev, term_t Address)
+{ struct linux_i2c_dev *blob;
+  int address;
+  if (!get_i2c_dev(Dev, &blob)) PL_fail;
+  if (!PL_get_integer_ex(Address, &address)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) PL_fail;
+  PL_succeed;
+}
+
+foreign_t i2c_slave_force_2(term_t Dev, term_t Address)
+{ struct linux_i2c_dev *blob;
+  int address;
+  if (!get_i2c_dev(Dev, &blob)) PL_fail;
+  if (!PL_get_integer_ex(Address, &address)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, address)) PL_fail;
+  PL_succeed;
 }
 
 foreign_t i2c_write_3(term_t Dev, term_t Bytes, term_t Actual)
@@ -158,11 +158,11 @@ foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
 }
 
 install_t install_linux_i2c()
-{ PL_register_foreign("i2c_slave", 2, i2c_slave_2, 0);
-  PL_register_foreign("i2c_slave_force", 2, i2c_slave_force_2, 0);
+{ PL_register_foreign("i2c_open", 2, i2c_open_2, 0);
   PL_register_foreign("i2c_funcs_dev_to_int", 2, i2c_funcs_dev_to_int_2, 0);
   PL_register_foreign("i2c_funcs_int_to_list", 2, i2c_funcs_int_to_list_2, 0);
-  PL_register_foreign("i2c_open", 2, i2c_open_2, 0);
+  PL_register_foreign("i2c_slave", 2, i2c_slave_2, 0);
+  PL_register_foreign("i2c_slave_force", 2, i2c_slave_force_2, 0);
   PL_register_foreign("i2c_write", 3, i2c_write_3, 0);
   PL_register_foreign("i2c_read", 3, i2c_read_3, 0);
 }
