@@ -21,6 +21,8 @@
  */
 #define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
 
+static int i2c_errno(const char *culprit);
+
 foreign_t i2c_open_2(term_t Pathname, term_t Dev)
 { char *pathname;
   /*
@@ -168,6 +170,18 @@ foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
    * rather than Unicode character atoms.
    */
   return PL_unify_list_ncodes(Bytes, actual, bytes);
+}
+
+/*!
+ * Raises an exception.
+ */
+int i2c_errno(const char *culprit)
+{ term_t Except = PL_new_term_ref();
+  if (!PL_unify_term(Except,
+                     PL_FUNCTOR_CHARS, "i2c_errno", 2,
+                       PL_CHARS, culprit,
+                       PL_INT, errno)) PL_fail;
+  return PL_raise_exception(Except);
 }
 
 install_t install_linux_i2c()
