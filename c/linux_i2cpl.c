@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <errno.h>
+
 #include <sys/ioctl.h>
 
 #include "linux_i2c_devpl.h"
@@ -164,21 +165,21 @@ foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
 /*!
  * Throws an exception if the address is \e not an integer.
  */
-foreign_t i2c_slave_2(term_t I2C, term_t Address)
+foreign_t i2c_slave_2(term_t I2C, term_t Addr)
 { struct linux_i2c_dev *blob;
-  int address;
+  int addr;
   if (!get_i2c_dev(I2C, &blob)) PL_fail;
-  if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE, address)) return i2c_errno("ioctl");
+  if (!PL_get_integer_ex(Addr, &addr)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE, addr)) return i2c_errno("ioctl");
   PL_succeed;
 }
 
-foreign_t i2c_slave_force_2(term_t I2C, term_t Address)
+foreign_t i2c_slave_force_2(term_t I2C, term_t Addr)
 { struct linux_i2c_dev *blob;
-  int address;
+  int addr;
   if (!get_i2c_dev(I2C, &blob)) PL_fail;
-  if (!PL_get_integer_ex(Address, &address)) PL_fail;
-  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, address)) return i2c_errno("ioctl");
+  if (!PL_get_integer_ex(Addr, &addr)) PL_fail;
+  if (0 > ioctl(blob->fd, I2C_SLAVE_FORCE, addr)) return i2c_errno("ioctl");
   PL_succeed;
 }
 
