@@ -33,4 +33,12 @@ test(mode1, Byte == 16'20) :-
     i2c_write(I2C, [16'00]),
     i2c_read(I2C, [Byte]).
 
+test(mode1_mode2, [Mode1, Mode2] == [16'20, 16'04]) :-
+    i2c_dev(Dev),
+    i2c_open(Dev, I2C),
+    pca9685_addr(Addr),
+    i2c_slave(I2C, Addr),
+    i2c_write(I2C, [16'00]),
+    i2c_read(I2C, [Mode1, Mode2]).
+
 :- end_tests(i2c_dev_1_pca9685_40).
