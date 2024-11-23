@@ -25,7 +25,7 @@ i2c_dev('/dev/i2c-1').
 
 pca9685_addr(16'40).
 
-test(it, Byte == 16'20) :-
+test(mode1, Byte == 16'20) :-
     i2c_dev(Dev),
     i2c_open(Dev, I2C),
     pca9685_addr(Addr),
