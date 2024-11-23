@@ -25,3 +25,8 @@ rebuild:
 
 installed:
 	swipl -g "ignore(pack_list_installed)" -t halt
+
+# Threaded testing on ARM A72 crashes: SWI-Prolog version 9.0.4 stable for
+# `aarch64-linux` on Linux Bookworm.
+test:
+	swipl --threads=false -l prolog/linux/i2c_dev_1.plt -g run_tests -t halt
