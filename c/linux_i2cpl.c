@@ -15,10 +15,19 @@
 
 #include "linux_i2c_devpl.h"
 
+/*
+ * Defines the maximum size of an I2C transfer. Used to allocate the stack-based
+ * read buffer, and validate the number of expected bytes to read.
+ */
 #define I2C_BLOCK_MAX (I2C_SMBUS_BLOCK_MAX + 2)
 
 foreign_t i2c_open_2(term_t Pathname, term_t Dev)
 { char *pathname;
+  /*
+   * Does the atom-to-character convertion need to care about Windows multi-byte
+   * characters? No because this pack does not work on Windows. It cannot build
+   * on Windows, not without the Linux headers.
+   */
   if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
   int fd;
   if (0 > (fd = open(pathname, O_RDWR))) PL_instantiation_error(Pathname);
@@ -154,6 +163,10 @@ foreign_t i2c_read_3(term_t Dev, term_t Expected, term_t Bytes)
   char bytes[I2C_BLOCK_MAX];
   ssize_t actual = read(blob->fd, bytes, expected);
   if (0 > actual) PL_fail;
+  /*
+   * Unify as codes, not as characters. The result will appear as integers
+   * rather than Unicode character atoms.
+   */
   return PL_unify_list_ncodes(Bytes, actual, bytes);
 }
 
