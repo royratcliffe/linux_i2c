@@ -5,8 +5,8 @@
 */
 
 :- module(linux_i2c,
-          [ i2c_funcs/2,                        % +I2C,-Funcs
-            i2c_open/2,                         % +Pathname,-I2C
+          [ i2c_open/2,                         % +Pathname,-I2C
+            i2c_funcs/2,                        % +I2C,-Funcs
             i2c_write/3,                        % +I2C,++Bytes,-Actual
             i2c_write/2,                        % +I2C,++Bytes
             i2c_read/3,                         % +I2C,+Expected,-Bytes
