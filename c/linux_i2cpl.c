@@ -108,6 +108,36 @@ foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
 #ifdef I2C_FUNC_SMBUS_WRITE_BYTE
     {I2C_FUNC_SMBUS_WRITE_BYTE, "smbus_write_byte"},
 #endif
+#ifdef I2C_FUNC_SMBUS_READ_BYTE_DATA
+    {I2C_FUNC_SMBUS_READ_BYTE_DATA, "smbus_read_byte_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_WRITE_BYTE_DATA
+    {I2C_FUNC_SMBUS_WRITE_BYTE_DATA, "smbus_write_byte_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_READ_WORD_DATA
+    {I2C_FUNC_SMBUS_READ_WORD_DATA, "smbus_read_word_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_WRITE_WORD_DATA
+    {I2C_FUNC_SMBUS_WRITE_WORD_DATA, "smbus_write_word_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_PROC_CALL
+    {I2C_FUNC_SMBUS_PROC_CALL, "smbus_proc_call"},
+#endif
+#ifdef I2C_FUNC_SMBUS_READ_BLOCK_DATA
+    {I2C_FUNC_SMBUS_READ_BLOCK_DATA, "smbus_read_block_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_WRITE_BLOCK_DATA
+    {I2C_FUNC_SMBUS_WRITE_BLOCK_DATA, "smbus_write_block_data"},
+#endif
+#ifdef I2C_FUNC_SMBUS_READ_I2C_BLOCK
+    {I2C_FUNC_SMBUS_READ_I2C_BLOCK, "smbus_read_i2c_block"},
+#endif
+#ifdef I2C_FUNC_SMBUS_WRITE_I2C_BLOCK
+    {I2C_FUNC_SMBUS_WRITE_I2C_BLOCK, "smbus_write_i2c_block"},
+#endif
+#ifdef I2C_FUNC_SMBUS_HOST_NOTIFY
+    {I2C_FUNC_SMBUS_HOST_NOTIFY, "smbus_host_notify"},
+#endif
   };
   for (size_t i = 0; i < sizeof(i2c_funcs)/sizeof(i2c_funcs[0]); i++)
     if (funcs & i2c_funcs[i].func)
