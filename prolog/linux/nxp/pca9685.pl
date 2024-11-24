@@ -1,4 +1,4 @@
-/*  File:    pca9685.pl
+/*  File:    linux/nxp/pca9685.pl
     Author:  Roy Ratcliffe, Northumberland, United Kingdom
     Created: Nov 24 2024
     Purpose: NXP PCA9685 for Linux
@@ -28,7 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-:- module(nxp_pca9685,
+:- module(linux_nxp_pca9685,
           [ led_adr/3,                          % ?OnOff,?LH,?Adr0
             reg_adr/2,                          % ?Reg,?Adr
             wr/3,                               % +I2C,+Adr:integer,++Bytes:list
