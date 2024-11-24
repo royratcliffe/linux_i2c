@@ -28,7 +28,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-:- module(pca9685,
+:- module(nxp_pca9685,
           [ led_adr/3,                          % ?OnOff,?LH,?Adr0
             reg_adr/2,                          % ?Reg,?Adr
             wr/3,                               % +I2C,+Adr:integer,++Bytes:list
@@ -36,7 +36,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
             rd/3,                               % +I2C,+Adr:integer,?Bytes:list
             ai/1                                % +I2C
           ]).
-:- use_module(i2c).
+:- use_module(library(linux/i2c)).
 
 /** <module> NXP PCA9685
 

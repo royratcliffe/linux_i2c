@@ -29,4 +29,4 @@ installed:
 # Threaded testing on ARM A72 crashes: SWI-Prolog version 9.0.4 stable for
 # `aarch64-linux` on Linux Bookworm.
 test:
-	swipl --threads=false $(patsubst %,-l %,$(wildcard prolog/linux/*.plt)) -t run_tests
+	swipl --threads=false $(patsubst %,-l %,$(wildcard prolog/linux/**/*.plt)) -t run_tests

@@ -1,6 +1,6 @@
 :- begin_tests(i2c_dev_1_pca9685_40).
-:- use_module(i2c).
-:- use_module(pca9685).
+:- use_module(library(linux/i2c)).
+:- use_module(library(linux/nxp/pca9685)).
 :- use_module(library(apply)).
 :- use_module(library(lists)).
 :- use_module(library(clpfd)).
