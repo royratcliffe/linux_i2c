@@ -8,7 +8,7 @@ exists at /dev/i2c-1.
 
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
-i2c_dev('/dev/i2c-1').
+i2c_dev(1).
 
 test(i2c_open) :-
     i2c_dev(Dev),

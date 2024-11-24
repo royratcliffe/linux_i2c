@@ -7,6 +7,7 @@
  */
 #include <linux/i2c.h>
 #include <linux/i2c-dev.h>
+#include <linux/limits.h>
 
 #include <unistd.h>
 #include <fcntl.h>
@@ -32,20 +33,22 @@
  */
 static int i2c_errno(const char *culprit);
 
-foreign_t i2c_open_2(term_t Pathname, term_t I2C)
-{ char *pathname;
+foreign_t i2c_open_2(term_t Dev, term_t I2C)
+{ int dev;
+  char pathname[PATH_MAX];
   int fd;
   /*
    * Does the atom-to-character convertion need to care about Windows multi-byte
    * characters? No because this pack does not work on Windows. It cannot build
    * on Windows, not without the Linux headers.
    */
-  if (!PL_get_atom_chars(Pathname, &pathname)) PL_fail;
+  if (!PL_get_integer(Dev, &dev)) PL_fail;
+  Ssnprintf(pathname, sizeof(pathname), "/dev/i2c-%d", dev);
   if (0 > (fd = open(pathname, O_RDWR))) return i2c_errno("open");
   return unify_i2c_dev(I2C, fd);
 }
 
-/*!
+/*
  * Makes an assumption about unsigned longs and 64-bit unsigned integers. It
  * assumes that their size matches on the target platform. The C `ioctl`
  * interface expects an unsigned long. The Prolog interface unifies the unsigned
@@ -199,10 +202,13 @@ foreign_t i2c_write_3(term_t I2C, term_t Bytes, term_t Actual)
 foreign_t i2c_read_3(term_t I2C, term_t Expected, term_t Bytes)
 { struct linux_i2c_dev *blob;
   size_t expected;
-  char bytes[I2C_BLOCK_MAX];
   ssize_t actual;
   if (!get_i2c_dev(I2C, &blob)) return PL_type_error(i2c_dev_blob_type.name, I2C);
   if (!PL_get_size_ex(Expected, &expected) || expected > I2C_BLOCK_MAX) PL_fail;
+  /*
+   * Use C99 variable-length arrays.
+   */
+  char bytes[expected];
   if (0 > (actual = read(blob->fd, bytes, expected))) return i2c_errno("read");
   /*
    * Unify as codes, not as characters. The result will appear as integers
