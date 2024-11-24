@@ -55,7 +55,7 @@ foreign_t i2c_open_2(term_t Dev, term_t I2C)
  * long with an unsigned 64-bit integer. It relies on C to coerce the former to
  * the latter.
  */
-foreign_t i2c_funcs_dev_to_int_2(term_t I2C, term_t Int)
+foreign_t i2c_funcs_int_2(term_t I2C, term_t Int)
 { struct linux_i2c_dev *blob;
   unsigned long funcs;
   if (!get_i2c_dev(I2C, &blob)) PL_fail;
@@ -70,7 +70,7 @@ foreign_t i2c_funcs_dev_to_int_2(term_t I2C, term_t Int)
  * presence or absence only. Each item in the resulting list represents a set
  * bit in the integer.
  */
-foreign_t i2c_funcs_int_to_list_2(term_t Int, term_t Funcs)
+foreign_t i2c_funcs_terms_2(term_t Int, term_t Funcs)
 { uint64_t funcs;
   if (!PL_get_uint64(Int, &funcs)) PL_fail;
   term_t Tail = PL_copy_term_ref(Funcs), Head = PL_new_term_ref();
@@ -228,8 +228,8 @@ int i2c_errno(const char *culprit)
 
 install_t install_linux_i2c()
 { PL_register_foreign("i2c_open", 2, i2c_open_2, 0);
-  PL_register_foreign("i2c_funcs_dev_to_int", 2, i2c_funcs_dev_to_int_2, 0);
-  PL_register_foreign("i2c_funcs_int_to_list", 2, i2c_funcs_int_to_list_2, 0);
+  PL_register_foreign("i2c_funcs_int", 2, i2c_funcs_int_2, 0);
+  PL_register_foreign("i2c_funcs_terms", 2, i2c_funcs_terms_2, 0);
   PL_register_foreign("i2c_slave", 2, i2c_slave_2, 0);
   PL_register_foreign("i2c_slave_force", 2, i2c_slave_force_2, 0);
   PL_register_foreign("i2c_write", 3, i2c_write_3, 0);
