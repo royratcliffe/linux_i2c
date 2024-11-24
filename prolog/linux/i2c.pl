@@ -1,7 +1,31 @@
 /*  File:    linux/i2c.pl
     Author:  Roy Ratcliffe, Northumberland, United Kingdom
     Created: Nov 17 2024
-    Purpose: I2C
+    Purpose: I2C Device on Linux
+
+Copyright (c) 2024, Roy Ratcliffe, Northumberland, United Kingdom
+
+SPDX-License-Identifier: MIT
+
+Permission is hereby granted, free of charge,  to any person obtaining a
+copy  of  this  software  and    associated   documentation  files  (the
+"Software"), to deal in  the   Software  without  restriction, including
+without limitation the rights to  use,   copy,  modify,  merge, publish,
+distribute, sublicense, and/or sell  copies  of   the  Software,  and to
+permit persons to whom the Software is   furnished  to do so, subject to
+the following conditions:
+
+    The above copyright notice and this permission notice shall be
+    included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT  WARRANTY OF ANY KIND, EXPRESS
+OR  IMPLIED,  INCLUDING  BUT  NOT   LIMITED    TO   THE   WARRANTIES  OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR   PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS  OR   COPYRIGHT  HOLDERS BE LIABLE FOR ANY
+CLAIM, DAMAGES OR OTHER LIABILITY,  WHETHER   IN  AN ACTION OF CONTRACT,
+TORT OR OTHERWISE, ARISING FROM,  OUT  OF   OR  IN  CONNECTION  WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
 */
 
 :- module(linux_i2c,
@@ -16,25 +40,9 @@
           ]).
 :- use_module(library(shlib)).
 
-/** <module> linux_i2c
+/** <module> Linux I2C Devices
+@author Roy Ratcliffe
 */
-
-/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-?- listing(linux_i2c:_).
-
-%   Foreign: i2c_slave/2
-true.
-
-Open an I2C controller. Ask for its capabilities using the `I2C_FUNCS` call to
-`ioctl` using the stream's file descriptor. See the followinmg snippet; some
-details elided.
-
-    ?- i2c_open('/dev/i2c-1', I2C).
-    ?- linux_i2c:i2c_funcs_int($Stream, Funcs), format('~16r~n', [Funcs]).
-    eff000d
-
-- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
 
 :- load_foreign_library(foreign(linux_i2c)).
 
