@@ -47,6 +47,16 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 :- load_foreign_library(foreign(linux_i2c)).
 
 %!  i2c_open(+Dev:integer, -I2C) is semidet.
+%
+%   Opens a device. Opening a device involves: turning a device number
+%   into a path and asking the kernel to open it for read-write access.
+%
+%   @arg Dev identifies a "character device" used for I2C by standard
+%   writes and reads to perform transfers. I2C devices appear at
+%   `/dev/i2c-` followed by a Dev number to identify the controller.
+%
+%   @arg I2C becomes a newly opened character device descriptor ready
+%   for I2C transfers.
 
 %!  i2c_funcs(+I2C, -Funcs:list) is det.
 
