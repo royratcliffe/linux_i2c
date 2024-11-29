@@ -171,7 +171,11 @@ reg_adr(led(all, OnOff, LH), Adr) :-
 reg_adr(pre(scale), 16'fe).
 reg_adr(test(mode), 16'ff).
 
-%!  wr(+I2C, +Adr:integer, ++Bytes:list) is semidet.
+%!  wr(+I2C, +Adr:nonneg, ++Bytes:list) is semidet.
+%
+%   A write operation first sends the *control register* that defines
+%   the start address for subsequent bytes; the control register
+%   auto-increments if enabled.
 
 wr(I2C, Adr, Bytes) :- i2c_write(I2C, [Adr|Bytes]).
 
