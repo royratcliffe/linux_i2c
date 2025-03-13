@@ -173,9 +173,10 @@ reg_adr(test(mode), 16'ff).
 
 %!  wr(+I2C, +Adr:nonneg, ++Bytes:list) is semidet.
 %
-%   A write operation first sends the *control register* that defines
-%   the start address for subsequent bytes; the control register
-%   auto-increments if enabled.
+%   A write operation first sends the *control register* that defines the start
+%   address for subsequent bytes; the control register auto-increments if
+%   enabled. Adr defines the only address without auto-increment, and therefore
+%   not very useful; enable auto-increment for multi-byte writes.
 
 wr(I2C, Adr, Bytes) :- i2c_write(I2C, [Adr|Bytes]).
 
